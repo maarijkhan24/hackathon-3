@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image"; // ✅ Import Image
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import sanityClient from "@/sanity/lib/client";
 import type { fullProduct } from "@/app/interface";
@@ -25,7 +25,6 @@ async function getData(slug: string): Promise<fullProduct | null> {
     },
     createdAt
   }`;
-
   return await sanityClient.fetch(query, { slug });
 }
 
@@ -48,10 +47,10 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   if (!data) {
     return (
       <div className="text-center py-16">
-        <h2 className="text-2xl font-bold">Product not found</h2>
-        <p>
+        <h2 className="text-3xl font-semibold text-gray-700">Product not found</h2>
+        <p className="mt-2 text-gray-500">
           Go back to the{" "}
-          <Link href="/Newest" className="text-yellow-500">
+          <Link href="/Newest" className="text-yellow-500 hover:underline">
             shop
           </Link>
           .
@@ -77,16 +76,16 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   };
 
   return (
-    <div className="bg-white">
+    <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <header className="bg-black text-white">
-        <div className="container mx-auto flex justify-between items-center py-4 px-6">
+        <div className="container mx-auto flex justify-between items-center py-6 px-8">
           <h1 className="text-2xl font-bold text-yellow-500">FoodTuck</h1>
           <div className="relative">
             <Link href="/shoppingcart">
-              <HiOutlineShoppingBag className="text-white text-[24px] cursor-pointer" />
+              <HiOutlineShoppingBag className="text-white text-2xl cursor-pointer" />
               {mounted && totalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-2 py-[2px]">
                   {totalItems()}
                 </span>
               )}
@@ -96,12 +95,11 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       </header>
 
       {/* Product Details */}
-      <div className="container mx-auto mt-8">
-        <div className="grid gap-8 md:grid-cols-2">
+      <div className="container mx-auto mt-10 px-6 lg:px-16">
+        <div className="grid gap-12 lg:grid-cols-2">
           {/* Images Section */}
           <div className="flex">
-            {/* Left Side Small Images */}
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-3">
               {images?.slice(0, 3).map((img, index) => {
                 const imageUrl = urlForImage(img).url();
                 return (
@@ -112,7 +110,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                     width={80}
                     height={80}
                     className={clsx(
-                      "w-20 h-20 object-cover cursor-pointer border border-gray-300 hover:border-yellow-500 transition",
+                      "w-20 h-20 object-cover rounded-md cursor-pointer border hover:shadow-md transition",
                       selectedImage === imageUrl && "border-2 border-yellow-500"
                     )}
                     onClick={() => setSelectedImage(imageUrl)}
@@ -121,52 +119,46 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
               })}
             </div>
 
-            {/* Main Large Image */}
-            <div className="ml-4 flex-grow">
+            <div className="ml-6 flex-grow">
               <Image
                 src={selectedImage}
                 alt="Selected"
                 width={600}
                 height={400}
-                className="w-full h-[400px] object-cover border border-gray-300 transition-all"
+                className="w-full h-[400px] object-cover rounded-lg border border-gray-300 shadow-md"
               />
             </div>
           </div>
 
           {/* Product Info */}
           <div>
-            <h2 className="text-3xl font-bold">{name}</h2>
-            <p className="mt-4 text-gray-500">{description}</p>
+            <h2 className="text-4xl font-bold text-gray-800">{name}</h2>
+            <p className="mt-4 text-gray-600">{description}</p>
 
-            {/* ⭐ Rating System */}
-            <div className="flex items-center mt-4">
+            <div className="flex items-center mt-6">
               {[...Array(5)].map((_, index) => (
                 <Star
                   key={index}
                   className={clsx(
-                    "h-5 w-5",
+                    "h-6 w-6",
                     index < Math.round(rating)
                       ? "text-yellow-500 fill-yellow-500"
                       : "text-gray-300"
                   )}
                 />
               ))}
-              <span className="ml-2 text-gray-500">{rating.toFixed(1)} / 5.0</span>
+              <span className="ml-2 text-gray-600">{rating.toFixed(1)} / 5.0</span>
             </div>
 
-            {/* 💰 Price Display */}
-            <p className="mt-4 text-lg font-bold">Price: ${productPrice.toFixed(2)}</p>
-            <p className="mt-4 text-sm text-gray-600">Category: {categoryName}</p>
+            <p className="mt-6 text-2xl font-bold text-gray-800">Price: ${productPrice.toFixed(2)}</p>
+            <p className="mt-2 text-sm text-gray-500">Category: {categoryName}</p>
 
-            {/* 🛒 Add to Cart Button */}
-            <div className="mt-6">
-              <button
-                onClick={handleAddToCart}
-                className="bg-yellow-500 text-white px-6 py-2 rounded-md hover:bg-yellow-600 transition"
-              >
-                Add to Cart
-              </button>
-            </div>
+            <button
+              onClick={handleAddToCart}
+              className="mt-8 bg-yellow-500 text-white px-8 py-3 rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+            >
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
